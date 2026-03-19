@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Exclude stub source files — only the compiled DLLs are used as references -->
+    <Compile Remove="stubs/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="sts2">
       <HintPath>$(STS2GameDir)\data_sts2_windows_x86_64\sts2.dll</HintPath>
       <Private>false</Private>
