@@ -395,25 +395,19 @@ public static partial class McpMod
         return state;
     }
 
+    private static string GetCostDisplay(CardModel card)
+        => card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString();
+
+    private static string? GetStarCostDisplay(CardModel card)
+    {
+        if (card.HasStarCostX) return "X";
+        if (card.CurrentStarCost >= 0) return card.GetStarCostWithModifiers().ToString();
+        return null;
+    }
+
     private static Dictionary<string, object?> BuildCardState(CardModel card, int index)
     {
-        string costDisplay;
-        if (card.EnergyCost.CostsX)
-            costDisplay = "X";
-        else
-        {
-            int cost = card.EnergyCost.GetAmountToSpend();
-            costDisplay = cost.ToString();
-        }
-
         card.CanPlay(out var unplayableReason, out _);
-
-        // Star cost (The Regent's cards; CanonicalStarCost >= 0 means card has a star cost)
-        string? starCostDisplay = null;
-        if (card.HasStarCostX)
-            starCostDisplay = "X";
-        else if (card.CurrentStarCost >= 0)
-            starCostDisplay = card.GetStarCostWithModifiers().ToString();
 
         return new Dictionary<string, object?>
         {
@@ -421,8 +415,8 @@ public static partial class McpMod
             ["id"] = card.Id.Entry,
             ["name"] = card.Title,
             ["type"] = card.Type.ToString(),
-            ["cost"] = costDisplay,
-            ["star_cost"] = starCostDisplay,
+            ["cost"] = GetCostDisplay(card),
+            ["star_cost"] = GetStarCostDisplay(card),
             ["description"] = SafeGetCardDescription(card),
             ["target_type"] = card.TargetType.ToString(),
             ["can_play"] = unplayableReason == UnplayableReason.None,
@@ -449,6 +443,8 @@ public static partial class McpMod
             list.Add(new Dictionary<string, object?>
             {
                 ["name"] = SafeGetText(() => card.Title),
+                ["cost"] = GetCostDisplay(card),
+                ["star_cost"] = GetStarCostDisplay(card),
                 ["description"] = SafeGetCardDescription(card, pile)
             });
         }
@@ -733,6 +729,7 @@ public static partial class McpMod
                 item["card_name"] = SafeGetText(() => card.Title);
                 item["card_type"] = card.Type.ToString();
                 item["card_rarity"] = card.Rarity.ToString();
+                item["card_star_cost"] = GetStarCostDisplay(card);
                 item["card_description"] = SafeGetCardDescription(card, PileType.None);
                 item["keywords"] = BuildHoverTips(card.HoverTips);
             }
@@ -968,24 +965,14 @@ public static partial class McpMod
             var card = holder.CardModel;
             if (card == null) continue;
 
-            string costDisplay = card.EnergyCost.CostsX
-                ? "X"
-                : card.EnergyCost.GetAmountToSpend().ToString();
-
-            string? starCostDisplay = null;
-            if (card.HasStarCostX)
-                starCostDisplay = "X";
-            else if (card.CurrentStarCost >= 0)
-                starCostDisplay = card.GetStarCostWithModifiers().ToString();
-
             cards.Add(new Dictionary<string, object?>
             {
                 ["index"] = index,
                 ["id"] = card.Id.Entry,
                 ["name"] = SafeGetText(() => card.Title),
                 ["type"] = card.Type.ToString(),
-                ["cost"] = costDisplay,
-                ["star_cost"] = starCostDisplay,
+                ["cost"] = GetCostDisplay(card),
+                ["star_cost"] = GetStarCostDisplay(card),
                 ["description"] = SafeGetCardDescription(card, PileType.None),
                 ["rarity"] = card.Rarity.ToString(),
                 ["is_upgraded"] = card.IsUpgraded,
@@ -1040,7 +1027,8 @@ public static partial class McpMod
                 ["id"] = card.Id.Entry,
                 ["name"] = SafeGetText(() => card.Title),
                 ["type"] = card.Type.ToString(),
-                ["cost"] = card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString(),
+                ["cost"] = GetCostDisplay(card),
+                ["star_cost"] = GetStarCostDisplay(card),
                 ["description"] = SafeGetCardDescription(card, PileType.None),
                 ["rarity"] = card.Rarity.ToString(),
                 ["is_upgraded"] = card.IsUpgraded,
@@ -1113,7 +1101,8 @@ public static partial class McpMod
                 ["id"] = card.Id.Entry,
                 ["name"] = SafeGetText(() => card.Title),
                 ["type"] = card.Type.ToString(),
-                ["cost"] = card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString(),
+                ["cost"] = GetCostDisplay(card),
+                ["star_cost"] = GetStarCostDisplay(card),
                 ["description"] = SafeGetCardDescription(card, PileType.None),
                 ["rarity"] = card.Rarity.ToString(),
                 ["is_upgraded"] = card.IsUpgraded,
@@ -1153,7 +1142,8 @@ public static partial class McpMod
                     ["id"] = card.Id.Entry,
                     ["name"] = SafeGetText(() => card.Title),
                     ["type"] = card.Type.ToString(),
-                    ["cost"] = card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString(),
+                    ["cost"] = GetCostDisplay(card),
+                    ["star_cost"] = GetStarCostDisplay(card),
                     ["description"] = SafeGetCardDescription(card, PileType.None),
                     ["rarity"] = card.Rarity.ToString(),
                     ["is_upgraded"] = card.IsUpgraded,
@@ -1192,7 +1182,8 @@ public static partial class McpMod
                     ["id"] = card.Id.Entry,
                     ["name"] = SafeGetText(() => card.Title),
                     ["type"] = card.Type.ToString(),
-                    ["cost"] = card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString(),
+                    ["cost"] = GetCostDisplay(card),
+                    ["star_cost"] = GetStarCostDisplay(card),
                     ["description"] = SafeGetCardDescription(card, PileType.None),
                     ["rarity"] = card.Rarity.ToString(),
                     ["is_upgraded"] = card.IsUpgraded,
@@ -1248,7 +1239,8 @@ public static partial class McpMod
                 ["id"] = card.Id.Entry,
                 ["name"] = SafeGetText(() => card.Title),
                 ["type"] = card.Type.ToString(),
-                ["cost"] = card.EnergyCost.CostsX ? "X" : card.EnergyCost.GetAmountToSpend().ToString(),
+                ["cost"] = GetCostDisplay(card),
+                ["star_cost"] = GetStarCostDisplay(card),
                 ["description"] = SafeGetCardDescription(card),
                 ["is_upgraded"] = card.IsUpgraded,
                 ["keywords"] = BuildHoverTips(card.HoverTips)
