@@ -1067,16 +1067,20 @@ Finish the Crystal Sphere minigame.
 ```jsonc
 {
   "battle": {
-    "all_players_ready": false,
-    "players": [
-      {
-        "is_local": true,
-        "is_alive": true,
-        "is_ready_to_end_turn": false,
-        // Full player state for local player; summary for others
-      }
-    ]
-  }
+    "all_players_ready": false
+    // Same shape as singleplayer (round, turn, is_play_phase, enemies).
+    // Player state lives in top-level "player" (local) and "players" (all).
+  },
+  "players": [
+    {
+      "character": "The Ironclad",
+      "hp": 72, "max_hp": 80,
+      "gold": 99,
+      "is_alive": true,
+      "is_local": true,
+      "is_ready_to_end_turn": false   // Only present during combat
+    }
+  ]
 }
 ```
 
