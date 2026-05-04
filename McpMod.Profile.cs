@@ -365,4 +365,82 @@ public static partial class McpMod
 
         return result;
     }
+
+    internal static Dictionary<string, object?> BuildPartialCompendiumState()
+    {
+        var compendiumState = new Dictionary<string, object?>
+        {
+            ["source"] = "game_compendium",
+            ["language"] = null,
+            ["partial"] = true,
+            ["notes"] = new List<string>
+            {
+                "Partial snapshot derived from profile progress.",
+                "Entries are discovery-based and may omit undiscovered content."
+            },
+            ["domain_notes"] = new Dictionary<string, object?>
+            {
+                ["cards"] = "Derived from discovered_cards profile ids.",
+                ["relics"] = "Derived from discovered_relics profile ids.",
+                ["potions"] = "Derived from discovered_potions profile ids.",
+                ["enemies"] = "Derived from enemy_stats profile ids."
+            },
+            ["cards"] = new List<Dictionary<string, object?>>(),
+            ["relics"] = new List<Dictionary<string, object?>>(),
+            ["potions"] = new List<Dictionary<string, object?>>(),
+            ["enemies"] = new List<Dictionary<string, object?>>()
+        };
+
+        var progress = SaveManager.Instance?.Progress;
+        if (progress == null)
+        {
+            compendiumState["notes"] = new List<string>
+            {
+                "Partial snapshot unavailable: profile progress not loaded."
+            };
+            return compendiumState;
+        }
+
+        var cards = (List<Dictionary<string, object?>>)compendiumState["cards"]!;
+        foreach (var id in progress.DiscoveredCards)
+        {
+            cards.Add(new Dictionary<string, object?>
+            {
+                ["id"] = id.Entry,
+                ["unlocked"] = true
+            });
+        }
+
+        var relics = (List<Dictionary<string, object?>>)compendiumState["relics"]!;
+        foreach (var id in progress.DiscoveredRelics)
+        {
+            relics.Add(new Dictionary<string, object?>
+            {
+                ["id"] = id.Entry,
+                ["unlocked"] = true
+            });
+        }
+
+        var potions = (List<Dictionary<string, object?>>)compendiumState["potions"]!;
+        foreach (var id in progress.DiscoveredPotions)
+        {
+            potions.Add(new Dictionary<string, object?>
+            {
+                ["id"] = id.Entry,
+                ["unlocked"] = true
+            });
+        }
+
+        var enemies = (List<Dictionary<string, object?>>)compendiumState["enemies"]!;
+        foreach (var kv in progress.EnemyStats)
+        {
+            enemies.Add(new Dictionary<string, object?>
+            {
+                ["id"] = kv.Key.Entry,
+                ["unlocked"] = true
+            });
+        }
+
+        return compendiumState;
+    }
 }

@@ -579,6 +579,9 @@ public static partial class McpMod
             result["player"] = BuildPlayerState(_player);
         }
 
+        // Optional, backward-compatible compendium snapshot for bridge clients.
+        result["compendium_state"] = BuildPartialCompendiumState();
+
         return result;
     }
 
