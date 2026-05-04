@@ -335,6 +335,27 @@ public static partial class McpMod
 
         string action = actionElem.GetString() ?? "";
 
+        // Menu actions (FTUE/popup dismissal, game-over, character select, etc.) are
+        // scene-tree-driven and equally valid in MP. Route them to the shared handler
+        // so MP clients can dismiss blocking FTUE prompts without going through the
+        // run-mode-specific dispatcher.
+        if (action == "menu_select")
+        {
+            try
+            {
+                var option = parsed.TryGetValue("option", out var optElem) ? optElem.GetString() ?? "" : "";
+                var seed = parsed.TryGetValue("seed", out var seedElem) ? seedElem.GetString() : null;
+                var resultTask = RunOnMainThread(() => ExecuteMenuSelect(option, seed));
+                var result = resultTask.GetAwaiter().GetResult();
+                SendJson(response, result);
+            }
+            catch (Exception ex)
+            {
+                SendError(response, 500, $"Menu action failed: {ex.Message}");
+            }
+            return;
+        }
+
         try
         {
             var resultTask = RunOnMainThread(() => ExecuteMultiplayerAction(action, parsed));
