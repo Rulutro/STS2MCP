@@ -27,7 +27,7 @@ Every JSON response includes:
 
 | `state_type` | Screen | Available Actions |
 |---|---|---|
-| `menu` | Main menu or menu submenu, no run in progress | `menu_select` |
+| `menu` | Main menu, menu submenu, or a blocking FTUE/tutorial/popup that can also appear mid-run | `menu_select` |
 | `unknown` | Unrecognized room or null state | None |
 | `monster` / `elite` / `boss` | In combat | `play_card`, `use_potion`, `end_turn` |
 | `hand_select` | In-combat card selection (exhaust, discard, upgrade) | `combat_select_card`, `combat_confirm_selection` |
