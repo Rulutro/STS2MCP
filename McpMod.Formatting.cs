@@ -363,10 +363,12 @@ public static partial class McpMod
                 ? $"HP: {pet["hp"]}/{pet["max_hp"]} | Block: {pet["block"]}"
                 : "DEAD";
             sb.AppendLine($"- **{pet["name"]}** (`{pet["id"]}`) - {status}");
-            if (alive)
+            if (alive && pet.TryGetValue("status", out var statusObj)
+                && statusObj is List<Dictionary<string, object?>> statusList && statusList.Count > 0)
             {
-                FormatListSection(sb, "Status", pet, "status",
-                    p => $"  - **{p["name"]}** ({FormatStatusAmount(p["amount"])}): {p["description"]}");
+                sb.AppendLine("  **Status**");
+                foreach (var p in statusList)
+                    sb.AppendLine($"  - **{p["name"]}** ({FormatStatusAmount(p["amount"])}): {p["description"]}");
             }
         }
         sb.AppendLine();
