@@ -858,6 +858,7 @@ public static partial class McpMod
             slotIndex++;
         }
         state["potions"] = potions;
+        state["max_potion_slots"] = player.MaxPotionCount;
 
         return state;
     }

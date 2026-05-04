@@ -99,7 +99,8 @@ Always present at the top level (except `menu`). Contains everything about the l
       "target_type": "None", // None, Self, AnyEnemy, AnyAlly, AnyPlayer, etc.
       "keywords": [ /* Keyword Objects */ ]
     }
-  ]
+  ],
+  "max_potion_slots": 3      // Belt capacity. Default 3, grows with belt-expanding relics (e.g. Potion Belt: +2). Use to detect a full belt: len(potions) >= max_potion_slots.
 }
 ```
 

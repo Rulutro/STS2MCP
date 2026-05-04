@@ -86,7 +86,7 @@ public static partial class McpMod
                 string counter = r.TryGetValue("counter", out var c) && c != null ? $" [{c}]" : "";
                 return $"- **{r["name"]}**{counter}: {r["description"]}";
             });
-            FormatListSection(sb, "Potions", topPlayer, "potions", p => $"- [{p["slot"]}] **{p["name"]}**: {p["description"]}");
+            FormatPotionsSection(sb, topPlayer);
         }
 
         if (state.TryGetValue("battle", out var battleObj) && battleObj is Dictionary<string, object?> battle)
@@ -275,7 +275,7 @@ public static partial class McpMod
                 string counter = r.TryGetValue("counter", out var c) && c != null ? $" [{c}]" : "";
                 return $"- **{r["name"]}**{counter}: {r["description"]}";
             });
-            FormatListSection(sb, "Potions", player, "potions", p => $"- [{p["slot"]}] **{p["name"]}**: {p["description"]}");
+            FormatPotionsSection(sb, player);
 
             if (player.TryGetValue("hand", out var handObj) && handObj is List<Dictionary<string, object?>> hand && hand.Count > 0)
             {
@@ -904,6 +904,19 @@ public static partial class McpMod
                 sb.AppendLine(formatter(item));
             sb.AppendLine();
         }
+    }
+
+    private static void FormatPotionsSection(StringBuilder sb, Dictionary<string, object?> playerDict)
+    {
+        if (!playerDict.TryGetValue("potions", out var potionsObj)
+            || potionsObj is not List<Dictionary<string, object?>> potions
+            || potions.Count == 0)
+            return;
+        int max = playerDict.TryGetValue("max_potion_slots", out var ms) && ms is int msi ? msi : potions.Count;
+        sb.AppendLine($"### Potions ({potions.Count}/{max})");
+        foreach (var p in potions)
+            sb.AppendLine($"- [{p["slot"]}] **{p["name"]}**: {p["description"]}");
+        sb.AppendLine();
     }
 
     private static void FormatMapVotesMarkdown(StringBuilder sb, Dictionary<string, object?> mapData)
