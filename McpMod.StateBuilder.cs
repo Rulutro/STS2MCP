@@ -60,7 +60,10 @@ public static partial class McpMod
         {
             var ftueState = BuildVisibleFtueState(tree.Root);
             if (ftueState != null)
+            {
+                ftueState["compendium_state"] = BuildPartialCompendiumState();
                 return ftueState;
+            }
         }
 
         if (!RunManager.Instance.IsInProgress)
@@ -354,6 +357,8 @@ public static partial class McpMod
                 result["message"] = "No run in progress.";
             }
 
+            // Optional, backward-compatible compendium snapshot for pre-run update checks.
+            result["compendium_state"] = BuildPartialCompendiumState();
             return result;
         }
 
@@ -366,11 +371,13 @@ public static partial class McpMod
                 if (activeCharSelect != null && IsNodeVisible(activeCharSelect))
                 {
                     AddCharacterSelectMenuState(result, activeCharSelect);
+                    result["compendium_state"] = BuildPartialCompendiumState();
                     return result;
                 }
             }
 
             result["state_type"] = "unknown";
+            result["compendium_state"] = BuildPartialCompendiumState();
             return result;
         }
 
